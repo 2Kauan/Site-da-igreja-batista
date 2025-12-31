@@ -1,38 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- Lógica do Menu Mobile ---
+
+    // 1. MENU MOBILE
     const botaoMenu = document.querySelector('.menu-mobile-btn');
     const navegacao = document.querySelector('.navegacao');
     const linksMenu = document.querySelectorAll('.link-menu');
 
-    // Alternar menu ao clicar no botão
-    botaoMenu.addEventListener('click', () => {
-        navegacao.classList.toggle('aberto');
-    });
+    if (botaoMenu && navegacao) {
+        botaoMenu.addEventListener('click', () => {
+            navegacao.classList.toggle('aberto');
+            botaoMenu.classList.toggle('ativo');
+        });
 
-    /* ============================================================
-       FECHAR MENU AO CLICAR FORA (Click Outside)
-       ============================================================ */
-    
+        linksMenu.forEach(link => {
+            link.addEventListener('click', () => {
+                navegacao.classList.remove('aberto');
+                botaoMenu.classList.remove('ativo');
+            });
+        });
+    }
     // Adiciona um ouvinte de clique em todo o documento
     document.addEventListener('click', (evento) => {
         
-        // Verifica se os elementos existem para evitar erros
         if (navegacao && botaoMenu) {
             
             const menuEstaAberto = navegacao.classList.contains('aberto');
             const alvoDoClique = evento.target;
 
-            // Lógica: Só executamos se o menu estiver visível
             if (menuEstaAberto) {
-                
-                // Verifica se o clique NÃO foi dentro do menu
+        
                 const clicouForaDoMenu = !navegacao.contains(alvoDoClique);
-                
-                // Verifica se o clique NÃO foi no botão (para evitar conflito de abrir/fechar)
+            
                 const clicouForaDoBotao = !botaoMenu.contains(alvoDoClique);
-
-                // Se clicou fora de ambos, fecha o menu
                 if (clicouForaDoMenu && clicouForaDoBotao) {
                     navegacao.classList.remove('aberto');
                     botaoMenu.classList.remove('ativo');
@@ -41,16 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Fechar menu ao clicar em um link
-    linksMenu.forEach(link => {
-        link.addEventListener('click', () => {
-            navegacao.classList.remove('aberto');
-        });
-    });
-
-    // --- Efeito de Cabeçalho (Glassmorphism) ---
+    // 2. EFEITO DE SCROLL NO CABEÇALHO
     const cabecalho = document.querySelector('.cabecalho');
-    
+
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             cabecalho.classList.add('rolagem');
@@ -59,25 +50,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Animação de Scroll (Intersection Observer) ---
-    // Esta API nativa detecta quando elementos entram na tela
+    // 3. ANIMAÇÃO DE ENTRADA (Intersection Observer)
     const observadorOpcoes = {
-        threshold: 0.15, // Aciona quando 15% do elemento estiver visível
+        threshold: 0.15,
         rootMargin: "0px 0px -50px 0px"
     };
 
     const observador = new IntersectionObserver((entradas, observador) => {
         entradas.forEach(entrada => {
             if (!entrada.isIntersecting) return;
-            
+
             entrada.target.classList.add('ativo');
-            observador.unobserve(entrada.target); // Para de observar após animar uma vez
+            observador.unobserve(entrada.target);
         });
     }, observadorOpcoes);
 
     const elementosRevelar = document.querySelectorAll('.revelar');
-    
+
     elementosRevelar.forEach(el => {
         observador.observe(el);
-    });
-});
+    });})
